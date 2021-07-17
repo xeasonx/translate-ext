@@ -1,0 +1,14 @@
+{
+    "extensionName": {
+        "message": "Translate Demo",
+        "description": ""
+    },
+    "extensionDescription": {
+        "message": "Demo extension",
+        "description": ""
+    },
+    "ctxMenuTranlateMe": {
+        "message": "Translate me",
+        "description": "Translate selected contents."
+    }
+}
