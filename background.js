@@ -1,3 +1,14 @@
+let portConn;
+
+function onMessagePost(message) {
+    console.log("message sent");
+}
+
+function onMessagePostFailed(error) {
+    console.log("message error");
+    console.log(error);
+}
+
 function onCreated() {
     if (browser.runtime.lastError) {
         console.log(`Error: ${browser.runtime.lastError}`);
@@ -34,12 +45,15 @@ function translate(word) {
         if (results.length > 0) {
             // console.log(results);
             let items = new Array();
+            items.push(word + ` /${pronunciation}/`);
             results.forEach(item => {
                 items.push([item[0] + ": " + item[1].join(", ")]);
             });
-            translateNotification(word + ` /${pronunciation}/`, items.join("\n"));            
+            portConn.postMessage({result: items});
+            // translateNotification(word + ` /${pronunciation}/`, items.join("\n"));            
         } else {
-            translateNotification(word, "not found")
+            portConn.postMessage({result: `${word}\nnot found`});
+            // translateNotification(word, "not found");
         }
     });
 }
@@ -66,6 +80,13 @@ function resolveTranslation(respJson) {
     simpleMeaningGroup.push(pronunciation);
     return simpleMeaningGroup;
 }
+
+function onClientPortConnected(port) {
+    portConn = port;
+    console.log("client port connected.");
+}
+
+browser.runtime.onConnect.addListener(onClientPortConnected);
 
 browser.contextMenus.create({
     id: "ctx-menu-translate-me",
